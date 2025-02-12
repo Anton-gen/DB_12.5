@@ -23,25 +23,12 @@ where date(p.payment_date) = '2005-07-30' and p.payment_date = r.rental_date and
 
 ## ОТВЕТ:
 
-При использование запроса из примера было обработано 200 записей за 15 секунд.
+При использование запроса из примера было обработано 200 записей за 15 секунд.  inventory, rental и film лишние.
 
 Исправленный запрос.
 
-SELECT 
-    CONCAT(c.last_name, ' ', c.first_name) AS Клиент, 
-    SUM(p.amount) AS Платеж
-FROM 
-    customer c
-JOIN 
-    rental r ON c.customer_id = r.customer_id 
-JOIN 
-    payment p ON r.rental_id = p.rental_id 
-JOIN 
-    inventory i ON i.inventory_id = r.inventory_id 
-WHERE 
-    p.payment_date >= '2005-07-30' 
-    AND p.payment_date < DATE_ADD('2005-07-30', INTERVAL 1 DAY)
-GROUP BY 
-    c.customer_id, c.last_name, c.first_name;
+select distinct concat(c.last_name, ' ', c.first_name), sum(p.amount) over (partition by c.customer_id)
+from payment p, customer c
+where date(p.payment_date) = '2005-07-30' and p.customer_id = c.customer_id 
 
-Обработано за 0.2 мс.
+Обработано 391 запись за 0.2 мс.
