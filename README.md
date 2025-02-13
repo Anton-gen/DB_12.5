@@ -34,6 +34,8 @@ where date(p.payment_date) = '2005-07-30' and p.customer_id = c.customer_id
 
 Обработано 391 запись за 0.2 мс.
 
+## Доработка
+
 SELECT concat(c.last_name, ' ', c.first_name) AS Клиент, SUM(p.amount) as Платеж
 FROM customer c
 JOIN rental r ON c.customer_id = r.customer_id 
