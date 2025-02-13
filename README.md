@@ -36,13 +36,50 @@ where date(p.payment_date) = '2005-07-30' and p.customer_id = c.customer_id
 
 ## Доработка
 
-SELECT concat(c.last_name, ' ', c.first_name) AS Клиент, SUM(p.amount) as Платеж
-FROM customer c
-JOIN rental r ON c.customer_id = r.customer_id 
-JOIN payment p ON r.rental_date = p.payment_date 
-join inventory i on i.inventory_id = r.inventory_id 
-where date(p.payment_date) >= '2005-07-30' and date(p.payment_date) < DATE_ADD('2005-07-30', INTERVAL 1 DAY)
-GROUP BY c.customer_id;
+EXPLAIN
+SELECT
+    CONCAT(c.last_name, ' ', c.first_name) AS client_name,
+    SUM(p.amount) AS total_payment
+FROM
+    payment p
+INNER JOIN
+    rental r ON p.rental_id = r.rental_id
+INNER JOIN
+    customer c ON c.customer_id = r.customer_id
+WHERE
+    p.payment_date >= '2005-07-30 00:00:00'
+    AND p.payment_date < DATE_ADD('2005-07-30 23:59:59', INTERVAL 1 SECOND)
+GROUP BY
+    c.last_name, c.first_name;
+
+![1](1.jpg)
+
+EXPLAIN
+    select *
+from INFORMATION_SCHEMA.STATISTICS
+where TABLE_NAME='payment';
+
+create index idx_payment_date on payment(payment_date);
+
+SELECT
+    CONCAT(c.last_name, ' ', c.first_name) AS client_name,
+    SUM(p.amount) AS total_payment
+FROM
+    payment p
+INNER JOIN
+    rental r ON p.rental_id = r.rental_id
+INNER JOIN
+    customer c ON c.customer_id = r.customer_id
+WHERE
+    p.payment_date >= '2005-07-30 00:00:00'
+    AND p.payment_date < DATE_ADD('2005-07-30 23:59:59', INTERVAL 1 SECOND)
+GROUP BY
+    c.last_name, c.first_name;
+
+drop index idx_payment_date on payment;
+
+![1](2.jpg)
+![1](3.jpg)
 
 ## Задание 3*
 
