@@ -34,6 +34,14 @@ where date(p.payment_date) = '2005-07-30' and p.customer_id = c.customer_id
 
 Обработано 391 запись за 0.2 мс.
 
+SELECT concat(c.last_name, ' ', c.first_name) AS Клиент, SUM(p.amount) as Платеж
+FROM customer c
+JOIN rental r ON c.customer_id = r.customer_id 
+JOIN payment p ON r.rental_date = p.payment_date 
+join inventory i on i.inventory_id = r.inventory_id 
+where date(p.payment_date) >= '2005-07-30' and date(p.payment_date) < DATE_ADD('2005-07-30', INTERVAL 1 DAY)
+GROUP BY c.customer_id;
+
 ## Задание 3*
 
 Самостоятельно изучите, какие типы индексов используются в PostgreSQL. Перечислите те индексы, которые используются в PostgreSQL, а в MySQL — нет.
